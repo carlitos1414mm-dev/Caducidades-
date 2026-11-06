@@ -1,0 +1,814 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#1f4e79">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>Caducidades</title>
+<style>
+:root{--bg:#f4f6f8;--card:#fff;--ink:#16202a;--mut:#5b6b7a;--pri:#1f4e79;--red:#d32f2f;--yel:#f2a900;--grn:#2e9e4f;--line:#d9e0e6}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font:17px/1.35 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink);padding-bottom:calc(84px + env(safe-area-inset-bottom))}
+header.top{position:sticky;top:0;background:var(--pri);color:#fff;display:flex;align-items:center;gap:4px;padding:6px 8px;padding-top:calc(6px + env(safe-area-inset-top));z-index:5}
+header h1{font-size:20px;margin:0 6px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ibtn{min-width:48px;min-height:48px;background:transparent;color:#fff;border:0;font-size:26px}
+main{padding:12px;max-width:640px;margin:0 auto}
+.btn{min-height:52px;padding:0 18px;border:0;border-radius:12px;font-size:17px;font-weight:600;background:var(--pri);color:#fff}
+.btn.sec{background:#e6ecf1;color:var(--ink)}
+.btn.danger{background:var(--red)}
+.btn.full{width:100%;display:block}
+.mt{margin-top:10px}
+.mut{color:var(--mut);font-size:14px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+.area{position:relative;min-height:100px;border-radius:14px;background:var(--card);border:2px solid var(--line);font-size:19px;font-weight:700;padding:10px;color:var(--ink);text-align:center}
+.area small{display:block;font-weight:400;color:var(--mut);font-size:13px;margin-top:4px}
+.badge{position:absolute;top:6px;right:6px;background:var(--red);color:#fff;border-radius:99px;min-width:24px;padding:1px 7px;font-size:13px}
+nav.bottom{position:fixed;bottom:0;left:0;right:0;display:flex;background:#fff;border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom);z-index:5}
+nav.bottom button{flex:1;min-height:64px;border:0;background:none;font-size:13px;color:var(--mut)}
+nav.bottom button.on{color:var(--pri);font-weight:700}
+nav.bottom b{display:block;font-size:22px;font-weight:400}
+.tabs{display:flex;gap:6px;margin-bottom:12px}
+.tabs button{flex:1;min-height:48px;border:0;border-radius:10px;background:#e6ecf1;font-weight:600;font-size:16px;color:var(--ink)}
+.tabs .on{background:var(--pri);color:#fff}
+input,select{width:100%;min-height:52px;font-size:18px;padding:0 12px;border:2px solid var(--line);border-radius:12px;background:#fff;color:var(--ink)}
+label{display:block;font-size:14px;color:var(--mut);margin:12px 0 4px}
+.card{background:var(--card);border-radius:14px;padding:12px;margin-bottom:10px;border:1px solid var(--line)}
+.sug{display:flex;flex-direction:column;gap:6px;margin-top:6px}
+.sug button{min-height:48px;text-align:left;border:1px solid var(--line);background:#fff;border-radius:10px;padding:6px 10px;font-size:16px;color:var(--ink)}
+.ok{margin-top:8px;padding:8px 10px;background:#e7f5ec;border-radius:10px;font-weight:600}
+.step{display:flex;gap:8px}
+.step input{text-align:center;flex:1}
+.step button{width:64px;min-height:52px;font-size:28px;border:0;border-radius:12px;background:#e6ecf1;color:var(--ink)}
+.item{display:flex;align-items:center;gap:10px;min-height:68px}
+.dot{width:12px;align-self:stretch;border-radius:6px;flex:none;min-height:56px}
+.rojo{background:var(--red)}.amar{background:var(--yel)}.verde{background:var(--grn)}
+.pz{font-size:26px;font-weight:800;min-width:44px;text-align:right}
+.chips{display:flex;gap:8px;margin-bottom:10px}
+.chip{flex:1;text-align:center;border-radius:10px;padding:8px 4px;color:#fff;font-weight:700}
+table.nb{width:100%;border-collapse:collapse;background:#fff;font-size:16px}
+table.nb th,table.nb td{border:1.5px solid #222;padding:7px 6px;text-align:left;vertical-align:top}
+table.nb th{background:#eee}
+table.nb td:last-child,table.nb th:last-child{text-align:center}
+.cuad h2{font-size:30px;margin:0 0 2px}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:flex-end;z-index:20}
+.modal .box{background:#fff;width:100%;max-width:640px;margin:0 auto;max-height:92vh;overflow:auto;border-radius:18px 18px 0 0;padding:16px;padding-bottom:calc(16px + env(safe-area-inset-bottom))}
+.modal h3{margin:0 0 4px}
+.toast{position:fixed;left:12px;right:12px;bottom:calc(84px + env(safe-area-inset-bottom));background:#222;color:#fff;border-radius:12px;padding:6px 6px 6px 14px;display:flex;justify-content:space-between;align-items:center;gap:8px;z-index:30;max-width:616px;margin:0 auto}
+.toast button{background:none;border:0;color:#ffd54f;font-weight:700;font-size:16px;min-height:44px;padding:0 10px}
+.warn{background:#fff3cd;border:1px solid var(--yel);border-radius:12px;padding:10px;margin-bottom:12px}
+textarea{width:100%;min-height:170px;font:14px ui-monospace,Menlo,monospace;border:2px solid var(--line);border-radius:12px;padding:8px;color:var(--ink)}
+.empty{text-align:center;color:var(--mut);padding:28px 10px}
+.chk{display:flex;align-items:center;gap:10px;margin:10px 0;font-size:16px;color:var(--ink)}
+.chk input{width:26px;min-height:26px;height:26px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.two .btn{padding:0 6px;font-size:16px}
+.pv{margin-top:8px;padding:8px 10px;background:#eef3f7;border-radius:10px;font-size:15px}
+.pv .bad{color:var(--red);font-size:13px;word-break:break-all}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<nav id="nav" class="bottom"></nav>
+<div id="modal"></div>
+<div id="toast"></div>
+<input type="file" id="cam" accept="image/*" capture="environment" style="display:none">
+<script>
+'use strict';
+/* ===== Estado ===== */
+const KEY='caducidades_v1';
+const $=id=>document.getElementById(id);
+const pad=n=>String(n).padStart(2,'0');
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+function norm(o){
+  return{
+    areas:(o.areas||[]).map(a=>({
+      id:a.id||uid(),nombre:String(a.nombre||'Área'),ultimaRevision:a.ultimaRevision||null,
+      catalogo:(a.catalogo||[]).map(p=>({codigo:String(p.codigo),descripcion:String(p.descripcion||'')})),
+      capturas:(a.capturas||[]).map(c=>({id:c.id||uid(),codigo:String(c.codigo),descripcion:c.descripcion||'',fecha:c.fecha,
+        piezas:Number(c.piezas)||0,fechaRegistro:c.fechaRegistro||new Date().toISOString(),
+        enHoja:!!c.enHoja,retirada:!!c.retirada,archivada:!!c.archivada})).filter(c=>/^\d{4}-\d{2}-\d{2}$/.test(c.fecha))
+    })),
+    ultimoRespaldo:o.ultimoRespaldo||null,
+    compartidas:(Array.isArray(o.compartidas)?o.compartidas:[]).map(g=>({area:String(g.area||'Área'),rec:g.rec||null,
+      items:(g.items||[]).map(i=>({codigo:String(i.codigo),descripcion:String(i.descripcion||''),fecha:i.fecha,piezas:Number(i.piezas)||0})).filter(i=>/^\d{4}-\d{2}-\d{2}$/.test(i.fecha))})).filter(g=>g.items.length)
+  };
+}
+function load(){try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&Array.isArray(s.areas))return norm(s)}catch(e){}return{areas:[],ultimoRespaldo:null,compartidas:[]}}
+let state=load();
+function save(){try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){toast('⚠️ No se pudo guardar. Haz un respaldo ya.')}}
+const ui={view:'home',areaId:null,tab:'captura',filter:'todas',vista:'mias',filterC:'todas',edit:null,exp:null,sh:null,form:{codigo:'',desc:'',fecha:'',piezas:'1',nuevo:false}};
+const curArea=()=>state.areas.find(a=>a.id===ui.areaId);
+
+/* ===== Fechas ===== */
+function today(){const d=new Date();return new Date(d.getFullYear(),d.getMonth(),d.getDate())}
+function iso(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())}
+function fromIso(s){const p=s.split('-').map(Number);return new Date(p[0],p[1]-1,p[2])}
+function fmt(s){const p=s.split('-');return p[2]+'/'+p[1]+'/'+p[0]}
+function days(s){return Math.round((fromIso(s)-today())/864e5)}
+function parseFecha(txt){
+  txt=String(txt||'').trim();let y,mo,d,m;
+  if(m=txt.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/)){y=+m[1];mo=+m[2];d=+m[3]}
+  else if(m=txt.match(/^(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{2}|\d{4})$/)){d=+m[1];mo=+m[2];y=+m[3];if(y<100)y+=2000}
+  else return null;
+  const dt=new Date(y,mo-1,d);
+  if(dt.getFullYear()!==y||dt.getMonth()!==mo-1||dt.getDate()!==d)return null;
+  return iso(dt);
+}
+function maskFecha(v){const d=v.replace(/\D/g,'').slice(0,8);let o=d.slice(0,2);if(d.length>2)o+='/'+d.slice(2,4);if(d.length>4)o+='/'+d.slice(4);return o}
+function sem(s){const n=days(s);return n<7?'rojo':n<=15?'amar':'verde'}
+function estado(s){const n=days(s);return n<0?'Vencido hace '+(-n)+' d':n===0?'Vence HOY':'Faltan '+n+' d'}
+
+/* ===== Datos derivados ===== */
+const isActive=c=>!c.retirada&&!c.archivada;
+function cleanup(){
+  let ch=false;
+  state.areas.forEach(a=>a.capturas.forEach(c=>{if(!c.archivada&&days(c.fecha)<-2){c.archivada=true;ch=true}}));
+  state.compartidas.forEach(g=>{const n=g.items.length;g.items=g.items.filter(i=>days(i.fecha)>=-2);if(g.items.length!==n)ch=true});
+  const m=state.compartidas.length;state.compartidas=state.compartidas.filter(g=>g.items.length);if(state.compartidas.length!==m)ch=true;
+  if(ch)save();
+}
+const fmtDT=s=>{if(!s)return'';const d=new Date(s);return isNaN(d)?'':pad(d.getDate())+'/'+pad(d.getMonth()+1)+'/'+d.getFullYear()+' '+pad(d.getHours())+':'+pad(d.getMinutes())};
+function descOf(a,c){const p=a.catalogo.find(p=>p.codigo===c.codigo);return p?p.descripcion:(c.descripcion||'(sin descripción)')}
+function activas(){const r=[];state.areas.forEach(a=>a.capturas.forEach(c=>{if(isActive(c))r.push({a,c})}));return r.sort((x,y)=>x.c.fecha<y.c.fecha?-1:x.c.fecha>y.c.fecha?1:0)}
+function rojos(a){return a.capturas.filter(c=>isActive(c)&&sem(c.fecha)==='rojo').length}
+
+/* ===== UI utils ===== */
+let toastT=null;
+function toast(msg,label,fn,ms){
+  const t=$('toast');
+  t.innerHTML='<div class="toast"><span>'+esc(msg)+'</span>'+(label?'<button id="toastbtn">'+esc(label)+'</button>':'')+'</div>';
+  if(label)$('toastbtn').onclick=()=>{t.innerHTML='';fn&&fn()};
+  clearTimeout(toastT);if(ms!==0)toastT=setTimeout(()=>{t.innerHTML=''},ms||6000);
+}
+function buzz(){try{navigator.vibrate&&navigator.vibrate(30)}catch(e){}}
+let askRes=null,askBtns=[];
+function openModal(h){$('modal').innerHTML='<div class="modal" id="modalbg"><div class="box">'+h+'</div></div>'}
+function closeModal(){$('modal').innerHTML='';if(askRes){const r=askRes;askRes=null;r(null)}}
+function ask(title,msg,btns){
+  return new Promise(res=>{
+    askBtns=btns;
+    openModal('<h3>'+esc(title)+'</h3><p>'+esc(msg)+'</p>'+btns.map((b,i)=>'<button class="btn '+(b.cls||'')+' full mt" data-ask="'+i+'">'+esc(b.t)+'</button>').join(''));
+    askRes=res;
+  });
+}
+function mutate(fn,msg){
+  closeModal();
+  const snap=JSON.stringify(state);
+  fn();save();render();
+  if(msg)toast(msg,'Deshacer',()=>{state=norm(JSON.parse(snap));save();render()});
+}
+async function copyText(t){
+  try{await navigator.clipboard.writeText(t);return true}catch(e){}
+  try{const x=document.createElement('textarea');x.value=t;document.body.appendChild(x);x.select();const ok=document.execCommand('copy');x.remove();return ok}catch(e){return false}
+}
+function download(name,blob){const u=URL.createObjectURL(blob);const l=document.createElement('a');l.href=u;l.download=name;document.body.appendChild(l);l.click();l.remove();setTimeout(()=>URL.revokeObjectURL(u),2000)}
+const slug=s=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-zA-Z0-9]+/g,'-').replace(/^-|-$/g,'').toLowerCase()||'area';
+
+/* ===== Vistas ===== */
+function render(){
+  cleanup();
+  let h='';
+  if(ui.view==='area'&&!curArea())ui.view='home';
+  if(ui.view==='home')h=viewHome();else if(ui.view==='area')h=viewArea();else if(ui.view==='activas')h=viewActivas();else h=viewResp();
+  $('app').innerHTML=h;
+  const red=activas().filter(x=>sem(x.c.fecha)==='rojo').length;
+  $('nav').innerHTML=[['home','🏠','Mis Áreas'],['activas','⏰','Activas'],['resp','💾','Respaldo']].map(i=>'<button class="'+((ui.view===i[0]||(i[0]==='home'&&ui.view==='area'))?'on':'')+'" data-act="nav" data-v="'+i[0]+'"><b>'+i[1]+'</b>'+i[2]+(i[0]==='activas'&&red?' <span style="color:var(--red)">● '+red+'</span>':'')+'</button>').join('');
+  if(ui.view==='area'&&ui.tab==='captura')updateSug();
+  if(ui.view==='area'&&ui.tab==='catalogo')renderCat();
+  if(ui.view==='resp')showPersist();
+}
+function topbar(title,left,right){return '<header class="top">'+(left||'')+'<h1>'+esc(title)+'</h1>'+(right||'')+'</header>'}
+
+function backupDays(){return state.ultimoRespaldo?Math.floor((Date.now()-Date.parse(state.ultimoRespaldo))/864e5):null}
+function hasData(){return state.areas.some(a=>a.catalogo.length||a.capturas.length)}
+
+function viewHome(){
+  let w='';
+  if(hasData()){
+    const d=backupDays();
+    if(d===null)w='<div class="warn">⚠️ Aún no tienes respaldo. Si pierdes el teléfono o se borran los datos, se pierde todo. <button class="btn full mt" data-act="nav" data-v="resp">Hacer respaldo</button></div>';
+    else if(d>=7)w='<div class="warn">⚠️ Tu último respaldo fue hace '+d+' días. <button class="btn full mt" data-act="nav" data-v="resp">Respaldar ahora</button></div>';
+  }
+  const grid=state.areas.length?'<div class="grid">'+state.areas.map(a=>{const r=rojos(a);return '<button class="area" data-act="openArea" data-id="'+a.id+'">'+(r?'<span class="badge">'+r+'</span>':'')+esc(a.nombre)+'<small>'+a.catalogo.length+' productos'+(a.ultimaRevision?' · rev. '+fmt(a.ultimaRevision):'')+'</small></button>'}).join('')+'</div>'
+    :'<div class="empty">Aún no tienes áreas.<br>Crea la primera con “+ Nueva Área”.</div>';
+  return topbar('Mis Áreas')+'<main>'+w+grid+'<button class="btn full" data-act="newArea">+ Nueva Área</button><button class="btn sec full mt" data-act="importArea">Importar área</button></main>';
+}
+
+function viewArea(){
+  const a=curArea();
+  const hd=topbar(a.nombre,'<button class="ibtn" data-act="back">←</button>','<button class="ibtn" data-act="areaMenu">⋮</button>');
+  const tabs='<div class="tabs">'+[['captura','Captura'],['catalogo','Catálogo'],['cuaderno','Cuaderno']].map(t=>'<button class="'+(ui.tab===t[0]?'on':'')+'" data-act="tab" data-t="'+t[0]+'">'+t[1]+'</button>').join('')+'</div>';
+  let b='';
+  if(ui.tab==='captura'){
+    const n=a.capturas.filter(c=>c.enHoja).length;
+    b='<div class="card"><label style="margin-top:0">Código</label><input id="f-cod" inputmode="numeric" autocomplete="off" placeholder="Código o parte de la descripción" value="'+esc(ui.form.codigo)+'"><div id="sug" class="sug"></div><div id="descbox"></div>'
+     +'<label>Fecha de caducidad (dd/mm/aaaa)</label><input id="f-fecha" inputmode="numeric" maxlength="10" placeholder="15/11/2026" value="'+esc(ui.form.fecha)+'">'
+     +'<label>Piezas</label><div class="step"><button data-act="pz" data-d="-1">−</button><input id="f-pz" inputmode="numeric" value="'+esc(ui.form.piezas)+'"><button data-act="pz" data-d="1">+</button></div>'
+     +'<button class="btn full mt" style="min-height:60px" data-act="agregar">Agregar a la hoja</button></div>'
+     +'<div class="mut" style="text-align:center">En la hoja de hoy: '+n+' · <a href="#" data-act="tab" data-t="cuaderno" style="color:var(--pri)">ver cuaderno</a></div>';
+  }else if(ui.tab==='catalogo'){
+    b='<input id="f-bus" placeholder="Buscar código o descripción"><button class="btn full mt" data-act="prodNew">+ Agregar producto maestro</button>'
+     +'<div class="two"><button class="btn sec" data-act="listaNew">📋 Pegar lista</button><button class="btn sec" data-act="camScan">📷 Escanear etiquetas</button></div><div id="catlist" class="mt"></div>';
+  }else{
+    const rows=a.capturas.filter(c=>c.enHoja);
+    b='<div class="card cuad"><h2>'+esc(a.nombre)+'</h2><div style="margin-bottom:8px;font-size:18px">'+fmt(iso(today()))+'</div>'
+     +(rows.length?'<table class="nb"><tr><th>Descripción</th><th>Código</th><th>Fecha</th><th>Piezas</th></tr>'+rows.map(c=>'<tr data-act="editCap" data-a="'+a.id+'" data-c="'+c.id+'"><td>'+esc(descOf(a,c))+'</td><td>'+esc(c.codigo)+'</td><td>'+fmt(c.fecha)+'</td><td>'+c.piezas+'</td></tr>').join('')+'</table><div class="mut mt">Toca una fila para corregirla.</div>'
+       :'<div class="empty">La hoja de hoy está vacía.<br>Captura productos en la pestaña “Captura”.</div>')+'</div>'
+     +'<button class="btn full" data-act="cuadShare">📤 Compartir cuaderno</button><button class="btn sec full mt" data-act="cuadSave">Guardar jornada</button>';
+  }
+  return hd+'<main>'+tabs+b+'</main>';
+}
+
+function compItems(){const r=[];state.compartidas.forEach(g=>g.items.forEach(i=>{if(days(i.fecha)>=-2)r.push({g,i})}));return r.sort((x,y)=>x.i.fecha<y.i.fecha?-1:x.i.fecha>y.i.fecha?1:0)}
+function viewActivas(){
+  const nC=compItems().length;
+  const tabs='<div class="tabs">'+[['mias','Mías'],['comp','Compartidas'+(nC?' ('+nC+')':'')]].map(t=>'<button class="'+(ui.vista===t[0]?'on':'')+'" data-act="vista" data-v="'+t[0]+'">'+t[1]+'</button>').join('')+'</div>';
+  return topbar('Activas')+'<main>'+tabs+(ui.vista==='comp'?bodyComp():bodyMias())+'</main>';
+}
+function bodyComp(){
+  const all=compItems();
+  if(!all.length)return '<div class="empty">Aún no hay activas compartidas.<br>Pide que te manden el texto (botón “Compartir activas”) y pégalo aquí.</div><button class="btn full" data-act="importAct">📥 Importar activas</button>';
+  let list=all;
+  if(ui.filterC!=='todas')list=list.filter(x=>x.g.area===ui.filterC);
+  const names=[...new Set(state.compartidas.map(g=>g.area))].sort((a,b)=>a.localeCompare(b));
+  const cnt={rojo:0,amar:0,verde:0};all.forEach(x=>cnt[sem(x.i.fecha)]++);
+  const sel='<select id="f-filtroC"><option value="todas">Todas las áreas</option>'+names.map(n=>'<option value="'+esc(n)+'"'+(ui.filterC===n?' selected':'')+'>'+esc(n)+'</option>').join('')+'</select>';
+  const chips='<div class="chips"><div class="chip rojo">'+cnt.rojo+' &lt;7d</div><div class="chip amar" style="color:#222">'+cnt.amar+' 7-15d</div><div class="chip verde">'+cnt.verde+' &gt;15d</div></div>';
+  const recs=state.compartidas.filter(g=>ui.filterC==='todas'||g.area===ui.filterC).map(g=>esc(g.area)+': '+fmtDT(g.rec)).join(' · ');
+  const items=list.map(x=>'<div class="card item"><div class="dot '+sem(x.i.fecha)+'"></div><div style="flex:1;min-width:0"><b>'+esc(x.i.descripcion||'(sin descripción)')+'</b><div class="mut">'+esc(x.i.codigo)+' · '+esc(x.g.area)+'</div><div>'+fmt(x.i.fecha)+' · '+estado(x.i.fecha)+'</div></div><div class="pz">'+x.i.piezas+'</div></div>').join('');
+  return '<div class="mut" style="margin-bottom:8px">Solo lectura. Las piezas son las del momento en que te las compartieron.<br>Recibido → '+recs+'</div>'+chips+sel+'<div class="mt">'+items+'</div>'
+    +'<button class="btn full" data-act="importAct">📥 Importar activas</button><button class="btn sec full mt" data-act="delComp">Borrar compartidas</button>';
+}
+function bodyMias(){
+  let list=activas();
+  const all=list;
+  if(ui.filter!=='todas')list=list.filter(x=>x.a.id===ui.filter);
+  const cnt={rojo:0,amar:0,verde:0};all.forEach(x=>cnt[sem(x.c.fecha)]++);
+  const sel='<select id="f-filtro"><option value="todas">Todas las áreas</option>'+state.areas.map(a=>'<option value="'+a.id+'"'+(ui.filter===a.id?' selected':'')+'>'+esc(a.nombre)+'</option>').join('')+'</select>';
+  const chips='<div class="chips"><div class="chip rojo">'+cnt.rojo+' &lt;7d</div><div class="chip amar" style="color:#222">'+cnt.amar+' 7-15d</div><div class="chip verde">'+cnt.verde+' &gt;15d</div></div>';
+  const items=list.length?list.map(x=>'<div class="card item" data-act="editCap" data-a="'+x.a.id+'" data-c="'+x.c.id+'"><div class="dot '+sem(x.c.fecha)+'"></div><div style="flex:1;min-width:0"><b>'+esc(descOf(x.a,x.c))+'</b><div class="mut">'+esc(x.c.codigo)+' · '+esc(x.a.nombre)+'</div><div>'+fmt(x.c.fecha)+' · '+estado(x.c.fecha)+'</div></div><div class="pz">'+x.c.piezas+'</div></div>').join('')
+    :'<div class="empty">Sin caducidades vigentes 🎉</div>';
+  return chips+sel+'<button class="btn full mt" data-act="shareAct">📤 Compartir activas</button><div class="mt">'+items+'</div><div class="mut" style="text-align:center">Los vencidos desaparecen solos 2 días después de su fecha.</div>';
+}
+
+function viewResp(){
+  const d=backupDays();
+  const st=d===null?'Nunca':(d===0?'Hoy':'Hace '+d+' día'+(d===1?'':'s'));
+  return topbar('Respaldo')+'<main><div class="card"><b>Último respaldo:</b> '+st+'<div class="mut mt" id="persist"></div></div>'
+    +'<p class="mut">Tus datos viven solo en este teléfono. Respáldalos seguido (y antes de cambiar de teléfono).</p>'
+    +'<button class="btn full" data-act="bkCopy">Copiar respaldo</button>'
+    +'<button class="btn full mt" data-act="bkDownload">Descargar archivo</button>'
+    +'<button class="btn full mt" data-act="bkShare">Compartir respaldo</button>'
+    +'<button class="btn sec full mt" data-act="bkRestore">Restaurar respaldo</button></main>';
+}
+function showPersist(){
+  const el=$('persist');if(!el)return;
+  if(navigator.storage&&navigator.storage.persisted)navigator.storage.persisted().then(p=>{if($('persist'))$('persist').textContent=p?'🔒 Almacenamiento protegido por el navegador.':'Almacenamiento no protegido: haz respaldos.'});
+  else el.textContent='Haz respaldos periódicos.';
+}
+
+/* ===== Captura ===== */
+function updateSug(){
+  const a=curArea();if(!a||!$('sug'))return;
+  const q=ui.form.codigo.trim().toLowerCase();
+  const exact=a.catalogo.find(p=>p.codigo.toLowerCase()===q);
+  let m=[];
+  if(q&&!exact)m=a.catalogo.filter(p=>p.codigo.toLowerCase().includes(q)||p.descripcion.toLowerCase().includes(q)).slice(0,5);
+  $('sug').innerHTML=m.map(p=>'<button data-act="pick" data-c="'+esc(p.codigo)+'"><b>'+esc(p.codigo)+'</b> · '+esc(p.descripcion)+'</button>').join('')
+    +((m.length&&!ui.form.nuevo&&q)?'<button data-act="nuevoProd" style="color:var(--pri);font-weight:600">+ Es un producto nuevo</button>':'');
+  const db=$('descbox');
+  if(!q)db.innerHTML='';
+  else if(exact)db.innerHTML='<div class="ok">✔ '+esc(exact.descripcion)+'</div>';
+  else if(!m.length||ui.form.nuevo)db.innerHTML='<label>Producto nuevo — escribe la descripción</label><input id="f-desc" autocomplete="off" value="'+esc(ui.form.desc)+'" placeholder="Ej. Nabisco Oreo 305g">';
+  else db.innerHTML='';
+}
+async function agregar(){
+  const a=curArea(),f=ui.form,cod=f.codigo.trim();
+  if(!cod){toast('Escribe el código');return}
+  let prod=a.catalogo.find(p=>p.codigo===cod);
+  let desc=prod?prod.descripcion:f.desc.trim();
+  if(!prod&&!desc){toast('Escribe la descripción del producto nuevo');const x=$('f-desc');x&&x.focus();return}
+  const fecha=parseFecha(f.fecha);
+  if(!fecha){toast('Fecha inválida. Ej: 15/11/2026');return}
+  const pz=parseInt(f.piezas,10);
+  if(!(pz>=1)){toast('Piezas debe ser 1 o más');return}
+  if(days(fecha)<0){const r=await ask('Esa fecha ya pasó','Caducó el '+fmt(fecha)+'. ¿Agregar de todos modos?',[{t:'Sí, agregar',v:'ok'},{t:'Corregir fecha',v:null,cls:'sec'}]);if(!r)return}
+  const ex=a.capturas.find(c=>c.codigo===cod&&c.fecha===fecha&&isActive(c));
+  let mode='new';
+  if(ex){
+    mode=await ask('Ya existe ese lote','Ya hay '+ex.piezas+' pieza(s) de '+cod+' con caducidad '+fmt(fecha)+'.',[{t:'Sumar '+pz+' piezas',v:'sum'},{t:'Reemplazar por '+pz,v:'rep',cls:'sec'},{t:'Cancelar',v:null,cls:'sec'}]);
+    if(!mode)return;
+  }
+  mutate(()=>{
+    if(!prod)a.catalogo.push({codigo:cod,descripcion:desc});
+    if(mode==='sum'){ex.piezas+=pz;ex.enHoja=true}
+    else if(mode==='rep'){ex.piezas=pz;ex.enHoja=true}
+    else a.capturas.push({id:uid(),codigo:cod,descripcion:desc,fecha:fecha,piezas:pz,fechaRegistro:new Date().toISOString(),enHoja:true,retirada:false,archivada:false});
+  },'Agregado: '+desc);
+  ui.form={codigo:'',desc:'',fecha:'',piezas:'1',nuevo:false};
+  render();buzz();
+  const x=$('f-cod');x&&x.focus();
+}
+
+/* ===== Catálogo ===== */
+function renderCat(){
+  const a=curArea(),el=$('catlist');if(!a||!el)return;
+  const q=(($('f-bus')||{}).value||'').trim().toLowerCase();
+  const l=a.catalogo.filter(p=>!q||p.codigo.toLowerCase().includes(q)||p.descripcion.toLowerCase().includes(q)).sort((x,y)=>x.descripcion.localeCompare(y.descripcion));
+  el.innerHTML=l.length?l.map(p=>'<div class="card" data-act="prodEdit" data-c="'+esc(p.codigo)+'"><b>'+esc(p.descripcion)+'</b><div class="mut">'+esc(p.codigo)+'</div></div>').join('')
+    :'<div class="empty">'+(a.catalogo.length?'Sin resultados.':'Tu catálogo empieza vacío. Se llena solo cuando capturas, o agrégalo aquí.')+'</div>';
+}
+function prodSheet(p,opt){
+  opt=opt||{};
+  const cam=p?'':'<button class="btn sec full" data-act="camAbrir">📷 Foto de etiqueta</button><div id="cam-st" class="mut" style="margin-top:6px"></div>';
+  const more=p?'':'<button class="btn '+(opt.cam?'':'sec ')+'full mt" data-act="prodSave" data-c="" data-more="'+(opt.cam?'cam':'1')+'">'+(opt.cam?'Guardar y escanear otra 📷':'Guardar y agregar otro')+'</button>';
+  openModal('<h3>'+(p?'Editar producto':'Nuevo producto maestro')+'</h3>'+cam+'<label>Código</label><input id="p-cod" inputmode="numeric" autocomplete="off" value="'+esc(p?p.codigo:'')+'"'+(p?' disabled':'')+'><label>Descripción</label><input id="p-desc" autocomplete="off" value="'+esc(p?p.descripcion:'')+'">'
+   +(opt.cam?more:'')+'<button class="btn '+(opt.cam?'sec ':'')+'full mt" data-act="prodSave" data-c="'+esc(p?p.codigo:'')+'">Guardar</button>'+(opt.cam?'':more)+(p?'<button class="btn danger full mt" data-act="prodDel" data-c="'+esc(p.codigo)+'">Eliminar del catálogo</button>':'')+'<button class="btn sec full mt" data-act="cerrar">Cancelar</button>');
+}
+
+/* ===== Pegar lista de productos ===== */
+function parseLista(text,a){
+  text=String(text).replace(/[​-‍﻿]/g,'').replace(/ /g,' ').replace(/\r\n?/g,'\n');
+  const seen=new Set(a.catalogo.map(p=>p.codigo)),nuevos=[],ya=[],bad=[];
+  const q=s=>s.replace(/^["'“”]+|["'“”]+$/g,'');
+  for(const raw of text.split('\n')){
+    const l=raw.trim();if(!l)continue;
+    const m=l.match(/^(\S+?)\s*[|;\t,]\s*(.+)$/)||l.match(/^(\S+)\s+(.+)$/);
+    if(!m){bad.push(l);continue}
+    const cod=q(m[1]),desc=q(m[2].replace(/^[\s\-–:|;,]+/,'').replace(/\s+/g,' ').trim());
+    if(!/^[A-Za-z0-9\-]{3,16}$/.test(cod)||!/\d/.test(cod)||desc.length<2){bad.push(l);continue}
+    if(seen.has(cod)){ya.push(cod);continue}
+    seen.add(cod);nuevos.push({codigo:cod,descripcion:desc});
+  }
+  return{nuevos,ya,bad};
+}
+function previewLista(){
+  const el=$('l-prev');if(!el)return;
+  const t=($('l-text')||{}).value||'';
+  if(!t.trim()){el.innerHTML='';return}
+  const r=parseLista(t,curArea());
+  el.innerHTML='✅ <b>'+r.nuevos.length+'</b> nuevos'+(r.ya.length?' · ↩️ '+r.ya.length+' ya existían (se omiten)':'')+(r.bad.length?' · ⚠️ '+r.bad.length+' sin entender':'')
+    +(r.nuevos.length?'<div class="mut">Ej. '+esc(r.nuevos[0].codigo)+' → '+esc(r.nuevos[0].descripcion)+'</div>':'')
+    +r.bad.slice(0,3).map(b=>'<div class="bad">✗ '+esc(b)+'</div>').join('')+(r.bad.length>3?'<div class="bad">… y '+(r.bad.length-3)+' más</div>':'');
+}
+
+/* ===== Foto de etiqueta (lector de texto local, sin internet) ===== */
+let ocrW=null,ocrIdle=null,ocrMsg=null;
+const absUrl=p=>new URL(p,location.href).href;
+function loadScript(src){return new Promise((ok,no)=>{const s=document.createElement('script');s.src=src;s.onload=ok;s.onerror=()=>no(new Error('falta '+src));document.head.appendChild(s)})}
+/* Busca el idioma español en la carpeta ocr: sin comprimir (spa.traineddata) o comprimido (.gz) */
+async function ocrCheck(){
+  for(const f of [['spa.traineddata',false],['spa.traineddata.gz',true]]){
+    try{if(window.caches&&await caches.match('ocr/'+f[0])){ui.ocrGz=f[1];return true}}catch(e){}
+    try{const r=await fetch('ocr/'+f[0],{method:'HEAD'});if(r.ok){ui.ocrGz=f[1];return true}}catch(e){}
+  }
+  return false;
+}
+async function getOcr(){
+  clearTimeout(ocrIdle);
+  if(!ocrW){
+    if(!window.Tesseract)await loadScript('ocr/tesseract.min.js');
+    ocrW=await Tesseract.createWorker('spa',1,{workerPath:absUrl('ocr/worker.min.js'),corePath:absUrl('ocr'),langPath:absUrl('ocr'),gzip:ui.ocrGz!==false,workerBlobURL:false,
+      logger:m=>{if(ocrMsg&&m&&m.status==='recognizing text')ocrMsg('Leyendo etiqueta… '+Math.round((m.progress||0)*100)+'%')}});
+  }
+  return ocrW;
+}
+function ocrRelease(){clearTimeout(ocrIdle);ocrIdle=setTimeout(()=>{if(ocrW){try{ocrW.terminate()}catch(e){}ocrW=null}},90000)}
+async function decodeImg(file){
+  try{return await createImageBitmap(file,{imageOrientation:'from-image'})}catch(e){}
+  return new Promise((ok,no)=>{const u=URL.createObjectURL(file),im=new Image();im.onload=()=>{URL.revokeObjectURL(u);ok(im)};im.onerror=()=>no(new Error('foto ilegible'));im.src=u});
+}
+function prepCanvas(img,side){
+  const W0=img.width||img.naturalWidth,H0=img.height||img.naturalHeight,s=side/Math.max(W0,H0);
+  const w=Math.round(W0*s),h=Math.round(H0*s),cv=document.createElement('canvas');cv.width=w;cv.height=h;
+  const x=cv.getContext('2d',{willReadFrequently:true});x.drawImage(img,0,0,w,h);
+  const id=x.getImageData(0,0,w,h),d=id.data,hist=new Uint32Array(256),n=w*h;
+  for(let i=0;i<d.length;i+=4){const g=(d[i]*299+d[i+1]*587+d[i+2]*114)/1000|0;d[i]=g;hist[g]++}
+  let acc=0,lo=0,hi=255;for(let v=0;v<256;v++){acc+=hist[v];if(acc>=n*0.02){lo=v;break}}
+  acc=0;for(let v=255;v>=0;v--){acc+=hist[v];if(acc>=n*0.02){hi=v;break}}
+  const k=hi>lo+10?255/(hi-lo):1;
+  for(let i=0;i<d.length;i+=4){const g=Math.max(0,Math.min(255,(d[i]-lo)*k));d[i]=d[i+1]=d[i+2]=g;d[i+3]=255}
+  x.putImageData(id,0,0);
+  return cv;
+}
+/* Interpreta lo que leyó el OCR: código corto (4-7 dígitos solo en su línea) y descripción encima */
+function parseEtiqueta(data,W,H){
+  const clean=t=>String(t||'').replace(/\s+/g,' ').trim();
+  let L=(data.lines&&data.lines.length)?data.lines.map(l=>({t:clean(l.text),b:l.bbox||null,conf:l.confidence})):String(data.text||'').split('\n').map(t=>({t:clean(t),b:null}));
+  L=L.filter(l=>l.t);
+  const fix=s=>s.replace(/[Oo]/g,'0').replace(/[Il|]/g,'1').replace(/S/g,'5').replace(/B/g,'8').replace(/Z/g,'2');
+  const codeTok=s=>/^[0-9OoIl|SBZ]{4,7}$/.test(s)&&(s.match(/\d/g)||[]).length>=3&&/^\d{4,7}$/.test(fix(s));
+  const isCode=t=>{
+    const tok=t.split(' ').filter(Boolean),cs=tok.filter(codeTok);
+    if(cs.length!==1)return null;
+    const rest=tok.filter(x=>x!==cs[0]);
+    return rest.every(x=>x.length<=2||/^\d[\d*:.\-]{9,}$/.test(x))?fix(cs[0]):null;
+  };
+  const SHORT=['DE','LA','EL','EN','UN','AL','LO','LE','SU','SI','NO','SIN','CON'];
+  const tidy=t=>{
+    let a=t.split(' ');
+    while(a.length>1&&((a[0].length===1&&!/\d/.test(a[0])&&a[0]!=='Y')||(a[0].length===2&&!/\d/.test(a[0])&&!SHORT.includes(a[0].toUpperCase()))))a.shift();
+    return a.join(' ');
+  };
+  const okDesc=t=>!/[$]/.test(t)&&t.split(' ').some(x=>x.replace(/[^A-Za-zÁÉÍÓÚÑáéíóúñ0-9]/g,'').length>=3)&&!/^\d[\d*:.\-]{9,}$/.test(t.replace(/\s/g,''));
+  const good=l=>l.conf==null||l.conf>=60;
+  const cands=L.map((l,i)=>({i,l,code:(l.conf==null||l.conf>=40)?isCode(l.t):null})).filter(c=>c.code);
+  let pick=null;
+  if(cands.length===1)pick=cands[0];
+  else if(cands.length>1){
+    if(W&&H&&cands.every(c=>c.l.b)){const cx=W/2,cy=H/2,dist=c=>{const b=c.l.b;return Math.hypot((b.x0+b.x1)/2-cx,(b.y0+b.y1)/2-cy)};pick=cands.slice().sort((p,q)=>dist(p)-dist(q))[0]}
+    else pick=cands[0];
+  }
+  let desc=[];
+  if(pick&&pick.l.b){
+    const S=L.filter(l=>l.b).sort((p,q)=>p.b.y0-q.b.y0),ci=S.indexOf(pick.l),C=pick.l.b,hC=Math.max(C.y1-C.y0,12);
+    let top=C.y0;
+    for(let j=ci-1;j>=0&&desc.length<4;j--){
+      const l=S[j],h=l.b.y1-l.b.y0;
+      if(W&&Math.abs(l.b.x0-C.x0)>0.3*W)continue;
+      if(!good(l)||!okDesc(l.t))continue;
+      if(top-l.b.y1>Math.max(hC,h)*2.2)break;
+      desc.unshift(tidy(l.t));top=l.b.y0;
+    }
+  }else if(pick){
+    for(let j=pick.i-1;j>=0&&desc.length<3;j--)if(good(L[j])&&okDesc(L[j].t))desc.unshift(tidy(L[j].t));
+  }else{
+    desc=L.filter(l=>good(l)&&okDesc(l.t)).slice(0,3).map(l=>tidy(l.t));
+  }
+  return{codigo:pick?pick.code:'',descripcion:desc.join(' ').trim()};
+}
+async function leerEtiqueta(file){
+  const st=m=>{const e=$('cam-st');if(e)e.textContent=m};
+  ocrMsg=st;
+  try{
+    st('Preparando foto…');
+    const img=await decodeImg(file);
+    st('Cargando lector (la primera vez tarda)…');
+    const w=await getOcr();
+    let res=null,side=2600,tries=0;
+    while(tries<2){
+      tries++;
+      const cv=prepCanvas(img,side);
+      st('Leyendo etiqueta…');
+      await w.setParameters({tessedit_pageseg_mode:'11'});
+      const out=await w.recognize(cv);
+      const r=parseEtiqueta(out.data,cv.width,cv.height);
+      if(!res||(r.codigo&&!res.codigo)||(!res.descripcion&&r.descripcion))res=r;
+      if(res.codigo&&res.descripcion)break;
+      side=3400;
+    }
+    ocrRelease();
+    if(!$('p-cod'))return;
+    if(res.codigo)$('p-cod').value=res.codigo;
+    if(res.descripcion)$('p-desc').value=res.descripcion;
+    const a=curArea(),ex=a&&res.codigo&&a.catalogo.find(p=>p.codigo===res.codigo);
+    if(ex)st('⚠️ Ese código ya está en el catálogo: '+ex.descripcion);
+    else if(res.codigo&&res.descripcion)st('✔ Revisa que esté bien y corrige lo que haga falta.');
+    else if(res.codigo)st('Leí el código, pero no la descripción. Escríbela o toma otra foto más cerca.');
+    else st('No pude leer el código. Escríbelo o toma otra foto más cerca de la etiqueta.');
+    const x=$(res.codigo?'p-desc':'p-cod');x&&x.focus();
+  }catch(e){
+    ocrRelease();
+    const m=String(e&&e.message||e);
+    st(/falta |Failed|network|fetch|load/i.test(m)?'No pude cargar el lector. Revisa que la carpeta ocr esté subida completa.':'No se pudo leer la foto ('+m.slice(0,60)+'). Escribe los datos a mano.');
+  }
+}
+function camClick(){const c=$('cam');c.value='';c.click()}
+
+/* ===== Editar captura ===== */
+function editSheet(a,c){
+  ui.edit={a:a.id,c:c.id};
+  openModal('<h3>'+esc(descOf(a,c))+'</h3><div class="mut">'+esc(c.codigo)+' · '+esc(a.nombre)+'</div>'
+   +'<label>Fecha de caducidad</label><input id="e-fecha" inputmode="numeric" maxlength="10" value="'+fmt(c.fecha)+'">'
+   +'<label>Piezas que quedan (resta las vendidas)</label><div class="step"><button data-act="epz" data-d="-1">−</button><input id="e-pz" inputmode="numeric" value="'+c.piezas+'"><button data-act="epz" data-d="1">+</button></div>'
+   +'<button class="btn full mt" data-act="eguardar">Guardar</button><button class="btn sec full mt" data-act="eretirar">Retirar (ya no hay / se sacó)</button><button class="btn danger full mt" data-act="eborrar">Eliminar captura (error)</button><button class="btn sec full mt" data-act="cerrar">Cancelar</button>');
+}
+function editTarget(){const a=state.areas.find(x=>x.id===ui.edit.a);const c=a&&a.capturas.find(x=>x.id===ui.edit.c);return{a,c}}
+
+/* ===== Cuaderno: imagen para compartir ===== */
+async function cuadShare(){
+  const a=curArea(),rows=a.capturas.filter(c=>c.enHoja);
+  if(!rows.length){toast('La hoja está vacía');return}
+  const W=1080,M=30,cols=[{t:'Descripción',w:480},{t:'Código',w:170},{t:'Fecha',w:230},{t:'Piezas',w:140}];
+  const mc=document.createElement('canvas').getContext('2d');mc.font='32px sans-serif';
+  const wrap=(ctx,t,w)=>{const words=String(t).split(' '),ls=[];let l='';words.forEach(x=>{const n=l?l+' '+x:x;if(ctx.measureText(n).width>w&&l){ls.push(l);l=x}else l=n});ls.push(l);return ls};
+  const LH=40,PAD=12;
+  const data=rows.map(c=>{const ls=wrap(mc,descOf(a,c),cols[0].w-PAD*2);return{c,ls,h:Math.max(ls.length*LH,LH)+PAD*2}});
+  const headH=130,thH=60;
+  const H=M+headH+thH+data.reduce((s,r)=>s+r.h,0)+M;
+  const cv=document.createElement('canvas');cv.width=W;cv.height=H;const x=cv.getContext('2d');
+  x.fillStyle='#fff';x.fillRect(0,0,W,H);x.fillStyle='#000';x.textBaseline='top';
+  x.font='bold 64px sans-serif';x.fillText(a.nombre,M,M);
+  x.font='36px sans-serif';x.fillText(fmt(iso(today())),M,M+78);
+  let y=M+headH;x.lineWidth=2;x.strokeStyle='#000';
+  x.fillStyle='#e8e8e8';x.fillRect(M,y,W-2*M,thH);x.fillStyle='#000';x.font='bold 30px sans-serif';
+  let cx=M;cols.forEach(co=>{x.strokeRect(cx,y,co.w,thH);x.fillText(co.t,cx+PAD,y+14);cx+=co.w});
+  y+=thH;x.font='32px sans-serif';
+  data.forEach(r=>{
+    cx=M;cols.forEach(co=>{x.strokeRect(cx,y,co.w,r.h);cx+=co.w});
+    r.ls.forEach((l,i)=>x.fillText(l,M+PAD,y+PAD+i*LH));
+    x.fillText(r.c.codigo,M+cols[0].w+PAD,y+PAD);
+    x.fillText(fmt(r.c.fecha),M+cols[0].w+cols[1].w+PAD,y+PAD);
+    x.fillText(String(r.c.piezas),M+cols[0].w+cols[1].w+cols[2].w+PAD,y+PAD);
+    y+=r.h;
+  });
+  cv.toBlob(async blob=>{
+    if(!blob){toast('No se pudo generar la imagen');return}
+    const name='cuaderno-'+slug(a.nombre)+'-'+iso(today())+'.png';
+    const file=new File([blob],name,{type:'image/png'});
+    try{
+      if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file],title:a.nombre});return}
+    }catch(e){if(e&&e.name==='AbortError')return}
+    download(name,blob);toast('Imagen descargada');
+  },'image/png');
+}
+
+/* ===== Exportar / importar área ===== */
+function exportText(a,inc){
+  let t='AREA:'+a.nombre+'\nPRODUCTOS:\n'+a.catalogo.map(p=>p.codigo+'|'+p.descripcion.replace(/\s+/g,' ')).join('\n');
+  if(inc){const cs=a.capturas.filter(isActive);if(cs.length)t+='\nCADUCIDADES:\n'+cs.map(c=>c.codigo+'|'+fmt(c.fecha)+'|'+c.piezas).join('\n')}
+  return t;
+}
+function parseArea(text){
+  text=String(text).replace(/[\u200B-\u200D\uFEFF]/g,'').replace(/\u00A0/g,' ').replace(/\r\n?/g,'\n');
+  const lines=text.split('\n').map(l=>l.trim()).filter(Boolean);
+  let nombre=null,sec=null,prods=[],caps=[],bad=0,m;
+  for(const l of lines){
+    if(m=l.match(/^AREA\s*:\s*(.+)$/i)){nombre=m[1].trim();sec=null;continue}
+    if(/^PRODUCTOS\s*:?$/i.test(l)){sec='p';continue}
+    if(/^CADUCIDADES\s*:?$/i.test(l)){sec='c';continue}
+    const i=l.indexOf('|');
+    if(i<0||!sec){bad++;continue}
+    if(sec==='p'){
+      const cod=l.slice(0,i).trim(),desc=l.slice(i+1).trim();
+      if(!cod||!desc){bad++;continue}
+      if(!prods.some(p=>p.codigo===cod))prods.push({codigo:cod,descripcion:desc});
+    }else{
+      const p=l.split('|').map(s=>s.trim()),f=parseFecha(p[1]),n=parseInt(p[2],10);
+      if(!p[0]||!f||!(n>0)){bad++;continue}
+      caps.push({codigo:p[0],fecha:f,piezas:n});
+    }
+  }
+  return nombre?{nombre,prods,caps,bad}:null;
+}
+/* ===== Compartir / importar ACTIVAS (para el jefe) ===== */
+function actText(o){
+  let list=activas();
+  if(o.area&&o.area!=='todas')list=list.filter(x=>x.a.id===o.area);
+  if(o.urgent)list=list.filter(x=>days(x.c.fecha)<=15);
+  const by=new Map();list.forEach(x=>{if(!by.has(x.a.nombre))by.set(x.a.nombre,[]);by.get(x.a.nombre).push(x)});
+  let t='ACTIVAS:'+fmtDT(new Date().toISOString());
+  by.forEach((arr,n)=>{t+='\nAREA:'+n+'\n'+arr.map(x=>x.c.codigo+'|'+descOf(x.a,x.c).replace(/[\s|]+/g,' ').trim()+'|'+fmt(x.c.fecha)+'|'+x.c.piezas).join('\n')});
+  return{text:t,n:list.length};
+}
+function parseActivas(text){
+  text=String(text).replace(/[​-‍﻿]/g,'').replace(/ /g,' ').replace(/\r\n?/g,'\n');
+  const lines=text.split('\n').map(l=>l.trim()).filter(Boolean);
+  if(!lines.length||!/^ACTIVAS\b/i.test(lines[0]))return null;
+  const groups=new Map();let area=null,bad=0,total=0,m;
+  for(const l of lines.slice(1)){
+    if(m=l.match(/^AREA\s*:\s*(.+)$/i)){area=m[1].trim();if(!groups.has(area))groups.set(area,[]);continue}
+    const p=l.split('|').map(s=>s.trim());
+    if(!area||p.length<4){bad++;continue}
+    const cod=p[0],piezas=parseInt(p[p.length-1],10),fecha=parseFecha(p[p.length-2]),desc=p.slice(1,p.length-2).join(' ').trim();
+    if(!cod||!fecha||!(piezas>=0)){bad++;continue}
+    groups.get(area).push({codigo:cod,descripcion:desc,fecha:fecha,piezas:piezas});total++;
+  }
+  return{groups,bad,total};
+}
+function importActivas(txt){
+  const r=parseActivas(txt);
+  if(!r){toast('Ese texto no empieza con “ACTIVAS:”');return}
+  if(!r.total){toast('No encontré activas válidas en el texto');return}
+  ui.view='activas';ui.vista='comp';ui.areaId=null;ui.filterC='todas';
+  mutate(()=>{
+    r.groups.forEach((items,nombre)=>{
+      const k=nombre.toLowerCase();
+      state.compartidas=state.compartidas.filter(g=>g.area.toLowerCase()!==k);
+      if(items.length)state.compartidas.push({area:nombre,rec:new Date().toISOString(),items});
+    });
+  },null);
+  toast('Importadas '+r.total+' activas de '+r.groups.size+' área(s)'+(r.bad?' · '+r.bad+' línea(s) ignoradas':''),null,null,8000);
+}
+function showShareAct(){
+  const o=ui.sh;
+  const r=actText(o);
+  openModal('<h3>Compartir activas</h3><p class="mut">Se comparte como texto. Quien lo reciba lo pega en su app con “Importar activas”.</p>'
+   +'<label>Área</label><select id="s-area"><option value="todas">Todas las áreas</option>'+state.areas.map(a=>'<option value="'+a.id+'"'+(o.area===a.id?' selected':'')+'>'+esc(a.nombre)+'</option>').join('')+'</select>'
+   +'<label class="chk"><input type="checkbox" id="s-urg"'+(o.urgent?' checked':'')+'> Solo las que vencen en 15 días o menos</label>'
+   +'<div class="mut" id="s-n">'+r.n+' producto(s)</div><textarea id="s-text" readonly></textarea>'
+   +'<button class="btn full mt" data-act="copyShare">Copiar texto</button>'+(navigator.share?'<button class="btn full mt" data-act="shareShare">Compartir (WhatsApp…)</button>':'')+'<button class="btn sec full mt" data-act="cerrar">Cerrar</button>');
+  $('s-text').value=r.n?r.text:'';
+}
+function refreshShareAct(){const r=actText(ui.sh);$('s-n').textContent=r.n+' producto(s)';$('s-text').value=r.n?r.text:''}
+function uniqueName(n){let i=2;const ex=x=>state.areas.some(a=>a.nombre.toLowerCase()===x.toLowerCase());while(ex(n+' ('+i+')'))i++;return n+' ('+i+')'}
+async function doImport(){
+  const txt=($('i-text')||{}).value||'';
+  if(txt.trim().startsWith('{')){toast('Eso es un respaldo completo. Usa Respaldo → Restaurar.');return}
+  if(/^\s*ACTIVAS\b/i.test(txt)){importActivas(txt);return}
+  const r=parseArea(txt);
+  if(!r){toast('No encontré la línea “AREA:” en el texto');return}
+  if(!r.prods.length&&!r.caps.length){toast('No encontré productos válidos');return}
+  const ex=state.areas.find(a=>a.nombre.toLowerCase()===r.nombre.toLowerCase());
+  let mode='new';
+  if(ex){
+    mode=await ask('Ya tienes “'+ex.nombre+'”','¿Qué hacemos con lo importado?',[{t:'Fusionar con la existente',v:'merge'},{t:'Crear una copia',v:'copy',cls:'sec'},{t:'Cancelar',v:null,cls:'sec'}]);
+    if(!mode)return;
+  }
+  let np=0,nc=0;
+  mutate(()=>{
+    let t;
+    if(mode==='merge')t=ex;
+    else{t={id:uid(),nombre:mode==='copy'?uniqueName(r.nombre):r.nombre,ultimaRevision:null,catalogo:[],capturas:[]};state.areas.push(t)}
+    r.prods.forEach(p=>{if(!t.catalogo.some(x=>x.codigo===p.codigo)){t.catalogo.push(p);np++}});
+    r.caps.forEach(c=>{
+      if(t.capturas.some(x=>x.codigo===c.codigo&&x.fecha===c.fecha&&isActive(x)))return;
+      const p=r.prods.find(p=>p.codigo===c.codigo)||t.catalogo.find(p=>p.codigo===c.codigo);
+      t.capturas.push({id:uid(),codigo:c.codigo,descripcion:p?p.descripcion:'',fecha:c.fecha,piezas:c.piezas,fechaRegistro:new Date().toISOString(),enHoja:false,retirada:false,archivada:false});nc++;
+    });
+  },null);
+  toast('Importado: '+np+' productos'+(r.caps.length?', '+nc+' caducidades':'')+(r.bad?' · '+r.bad+' línea(s) ignoradas':''),null,null,8000);
+}
+
+/* ===== Respaldo completo ===== */
+function backupText(){return JSON.stringify({app:'caducidades',v:1,exportado:new Date().toISOString(),areas:state.areas})}
+function markBackup(){state.ultimoRespaldo=new Date().toISOString();save();render()}
+async function restore(txt){
+  let o;try{o=JSON.parse(txt)}catch(e){toast('Ese texto no es un respaldo válido');return}
+  if(!o||o.app!=='caducidades'||!Array.isArray(o.areas)){toast('Ese texto no es un respaldo válido');return}
+  const n=norm(o);
+  const r=await ask('Restaurar respaldo','Se reemplazará TODO lo que hay ahora ('+state.areas.length+' áreas) por el respaldo ('+n.areas.length+' áreas).',[{t:'Sí, restaurar',v:'ok',cls:'danger'},{t:'Cancelar',v:null,cls:'sec'}]);
+  if(!r)return;
+  const comp=state.compartidas;
+  mutate(()=>{state=n;state.compartidas=comp;state.ultimoRespaldo=o.exportado||null;ui.view='home'},'Respaldo restaurado');
+}
+
+/* ===== Acciones ===== */
+const acts={
+  nav(d){ui.view=d.v;ui.areaId=null;render();scrollTo(0,0)},
+  openArea(d){ui.areaId=d.id;ui.view='area';ui.tab='captura';ui.form={codigo:'',desc:'',fecha:'',piezas:'1',nuevo:false};render();scrollTo(0,0)},
+  back(){ui.view='home';ui.areaId=null;render()},
+  tab(d,b){ui.tab=d.t;render();scrollTo(0,0)},
+  cerrar(){closeModal()},
+  newArea(){openModal('<h3>Nueva área</h3><label>Nombre (ej. Galletas)</label><input id="n-nombre" autocomplete="off"><button class="btn full mt" data-act="createArea">Crear</button><button class="btn sec full mt" data-act="cerrar">Cancelar</button>');setTimeout(()=>{const x=$('n-nombre');x&&x.focus()},50)},
+  createArea(){
+    const n=($('n-nombre').value||'').trim();
+    if(!n){toast('Escribe un nombre');return}
+    if(state.areas.some(a=>a.nombre.toLowerCase()===n.toLowerCase())){toast('Ya existe un área con ese nombre');return}
+    mutate(()=>state.areas.push({id:uid(),nombre:n,ultimaRevision:null,catalogo:[],capturas:[]}),null);
+  },
+  importArea(){openModal('<h3>Importar área</h3><p class="mut">Pega el texto que te compartieron (empieza con AREA:).</p><textarea id="i-text" placeholder="AREA:Galletas&#10;PRODUCTOS:&#10;22705|Nabisco Oreo..."></textarea><button class="btn full mt" data-act="doImport">Importar</button><button class="btn sec full mt" data-act="cerrar">Cancelar</button>')},
+  doImport(){doImport()},
+  vista(d){ui.vista=d.v;render();scrollTo(0,0)},
+  shareAct(){ui.sh={area:ui.filter,urgent:false};showShareAct()},
+  async copyShare(){const ok=await copyText($('s-text').value);toast(ok?'Texto copiado':'No se pudo copiar: selecciónalo y cópialo manualmente')},
+  async shareShare(){try{await navigator.share({text:$('s-text').value})}catch(e){}},
+  importAct(){openModal('<h3>Importar activas</h3><p class="mut">Pega el texto que te compartieron (empieza con ACTIVAS:). Si ya tenías activas de esas mismas áreas, se reemplazan por las nuevas.</p><textarea id="ia-text" placeholder="ACTIVAS:06/11/2026 08:30&#10;AREA:Galletas&#10;22705|Nabisco Oreo|15/11/2026|3"></textarea><button class="btn full mt" data-act="doImportAct">Importar</button><button class="btn sec full mt" data-act="cerrar">Cancelar</button>')},
+  doImportAct(){importActivas(($('ia-text')||{}).value||'')},
+  delComp(){mutate(()=>{state.compartidas=[]},'Activas compartidas borradas')},
+  areaMenu(){const a=curArea();openModal('<h3>'+esc(a.nombre)+'</h3><button class="btn full mt" data-act="exportArea">Exportar área</button><button class="btn sec full mt" data-act="renameArea">Renombrar</button><button class="btn danger full mt" data-act="delArea">Eliminar área</button><button class="btn sec full mt" data-act="cerrar">Cerrar</button>')},
+  renameArea(){const a=curArea();openModal('<h3>Renombrar área</h3><input id="r-nombre" value="'+esc(a.nombre)+'"><button class="btn full mt" data-act="doRename">Guardar</button><button class="btn sec full mt" data-act="cerrar">Cancelar</button>')},
+  doRename(){
+    const a=curArea(),n=($('r-nombre').value||'').trim();
+    if(!n){toast('Escribe un nombre');return}
+    if(state.areas.some(x=>x.id!==a.id&&x.nombre.toLowerCase()===n.toLowerCase())){toast('Ya existe un área con ese nombre');return}
+    mutate(()=>{a.nombre=n},'Área renombrada');
+  },
+  async delArea(){
+    const a=curArea();
+    const r=await ask('¿Eliminar “'+a.nombre+'”?','Se borrarán '+a.catalogo.length+' productos y '+a.capturas.filter(isActive).length+' caducidades activas. Podrás deshacerlo unos segundos.',[{t:'Sí, eliminar',v:'ok',cls:'danger'},{t:'Cancelar',v:null,cls:'sec'}]);
+    if(!r)return;
+    mutate(()=>{state.areas=state.areas.filter(x=>x.id!==a.id);ui.view='home';ui.areaId=null},'Área eliminada');
+  },
+  exportArea(){ui.exp={inc:false};showExport()},
+  async copyExport(){const ok=await copyText($('x-text').value);toast(ok?'Texto copiado':'No se pudo copiar: selecciónalo y cópialo manualmente')},
+  async shareExport(){try{await navigator.share({text:$('x-text').value})}catch(e){}},
+  pz(d){const v=Math.max(1,(parseInt($('f-pz').value,10)||0)+Number(d.d));$('f-pz').value=v;ui.form.piezas=String(v)},
+  pick(d){ui.form.codigo=d.c;ui.form.nuevo=false;$('f-cod').value=d.c;updateSug();$('f-fecha').focus()},
+  nuevoProd(){ui.form.nuevo=true;updateSug();const x=$('f-desc');x&&x.focus()},
+  agregar(){agregar()},
+  prodNew(){prodSheet(null);ocrCheck().then(v=>{ui.ocr=v})},
+  listaNew(){openModal('<h3>Pegar lista de productos</h3><p class="mut">Una línea por producto: primero el código y luego la descripción. Sirve pegar desde Excel, notas o WhatsApp.</p><textarea id="l-text" placeholder="31380 SAN ANTONIO HUEVO LIBRE DE JAULA 12 PZAS&#10;22705|Nabisco Oreo 305g&#10;60158&#9;Crepas 12 pzas"></textarea><div id="l-prev" class="pv" style="display:none"></div><button class="btn full mt" data-act="listaSave">Agregar al catálogo</button><button class="btn sec full mt" data-act="cerrar">Cancelar</button>')},
+  listaSave(){
+    const r=parseLista(($('l-text')||{}).value||'',curArea()),a=curArea();
+    if(!r.nuevos.length){toast(r.ya.length?'Todos esos códigos ya estaban en el catálogo':'No encontré productos para agregar');return}
+    mutate(()=>r.nuevos.forEach(p=>a.catalogo.push(p)),'Agregados '+r.nuevos.length+' productos'+(r.ya.length?' ('+r.ya.length+' ya existían)':''));
+  },
+  camAbrir(){
+    if(ui.ocr===false){const e=$('cam-st');if(e)e.textContent='La cámara aún no está activada: falta subir la carpeta ocr a GitHub (ver instrucciones).';return}
+    const b=document.querySelector('[data-more]');if(b){b.dataset.more='cam';b.textContent='Guardar y escanear otra 📷'}
+    camClick();
+  },
+  camScan(){
+    if(ui.ocr===false){toast('La cámara aún no está activada: falta subir la carpeta ocr a GitHub.',null,null,7000);return}
+    prodSheet(null,{cam:true});camClick();
+  },
+  prodEdit(d){prodSheet(curArea().catalogo.find(p=>p.codigo===d.c))},
+  prodSave(d){
+    const a=curArea(),desc=($('p-desc').value||'').trim();
+    if(!desc){toast('Escribe la descripción');return}
+    if(d.c){mutate(()=>{a.catalogo.find(p=>p.codigo===d.c).descripcion=desc},'Producto actualizado');return}
+    const cod=($('p-cod').value||'').trim();
+    if(!cod){toast('Escribe el código');return}
+    if(a.catalogo.some(p=>p.codigo===cod)){toast('Ese código ya existe en el catálogo');return}
+    mutate(()=>a.catalogo.push({codigo:cod,descripcion:desc}),d.more?null:'Producto agregado');
+    if(d.more){
+      prodSheet(null,{cam:d.more==='cam'});
+      toast('✔ Agregado: '+desc,null,null,2500);
+      if(d.more==='cam')camClick();else setTimeout(()=>{const x=$('p-cod');x&&x.focus()},50);
+    }
+  },
+  prodDel(d){const a=curArea();mutate(()=>{a.catalogo=a.catalogo.filter(p=>p.codigo!==d.c)},'Producto eliminado del catálogo')},
+  cuadShare(){cuadShare()},
+  async cuadSave(){
+    const a=curArea(),n=a.capturas.filter(c=>c.enHoja).length;
+    if(!n){toast('La hoja ya está vacía');return}
+    const r=await ask('Guardar jornada','Se limpia la hoja de hoy ('+n+' renglones). Las caducidades siguen en Activas y tu catálogo se queda igual.',[{t:'Guardar y limpiar',v:'ok'},{t:'Cancelar',v:null,cls:'sec'}]);
+    if(!r)return;
+    mutate(()=>{a.capturas.forEach(c=>{c.enHoja=false});a.ultimaRevision=iso(today())},'Jornada guardada');
+  },
+  editCap(d){const a=state.areas.find(x=>x.id===d.a),c=a&&a.capturas.find(x=>x.id===d.c);if(c)editSheet(a,c)},
+  epz(d){const v=Math.max(0,(parseInt($('e-pz').value,10)||0)+Number(d.d));$('e-pz').value=v},
+  eguardar(){
+    const t=editTarget();if(!t.c)return;
+    const f=parseFecha($('e-fecha').value),n=parseInt($('e-pz').value,10);
+    if(!f){toast('Fecha inválida');return}
+    if(!(n>=0)){toast('Piezas inválidas');return}
+    mutate(()=>{t.c.fecha=f;t.c.piezas=n;if(n===0)t.c.retirada=true},n===0?'Sin piezas: salió de Activas':'Guardado');
+  },
+  eretirar(){const t=editTarget();if(!t.c)return;mutate(()=>{t.c.retirada=true},'Retirado de Activas')},
+  eborrar(){const t=editTarget();if(!t.c)return;mutate(()=>{t.a.capturas=t.a.capturas.filter(x=>x.id!==t.c.id)},'Captura eliminada')},
+  async bkCopy(){const ok=await copyText(backupText());if(ok){markBackup();toast('Respaldo copiado. Pégalo en un lugar seguro (notas, correo, WhatsApp a ti mismo).',null,null,8000)}else toast('No se pudo copiar. Usa “Descargar archivo”.')},
+  bkDownload(){download('respaldo-caducidades-'+iso(today())+'.json',new Blob([backupText()],{type:'application/json'}));markBackup();toast('Archivo descargado')},
+  async bkShare(){
+    const name='respaldo-caducidades-'+iso(today())+'.json',txt=backupText();
+    try{
+      const f=new File([txt],name,{type:'application/json'});
+      if(navigator.canShare&&navigator.canShare({files:[f]}))await navigator.share({files:[f],title:'Respaldo caducidades'});
+      else await navigator.share({title:'Respaldo caducidades',text:txt});
+      markBackup();
+    }catch(e){if(!e||e.name!=='AbortError')toast('No se pudo compartir. Usa “Copiar” o “Descargar”.')}
+  },
+  bkRestore(){openModal('<h3>Restaurar respaldo</h3><p class="mut">Pega el respaldo o elige el archivo.</p><textarea id="r-text" placeholder="{&quot;app&quot;:&quot;caducidades&quot;,...}"></textarea><label>…o elige archivo</label><input type="file" id="r-file" accept=".json,application/json,text/plain"><button class="btn full mt" data-act="doRestore">Restaurar</button><button class="btn sec full mt" data-act="cerrar">Cancelar</button>')},
+  doRestore(){restore($('r-text').value)}
+};
+function showExport(){
+  const a=curArea();
+  openModal('<h3>Exportar “'+esc(a.nombre)+'”</h3><textarea id="x-text" readonly></textarea><label class="chk"><input type="checkbox" id="x-inc"'+(ui.exp.inc?' checked':'')+'> Incluir caducidades activas</label><button class="btn full" data-act="copyExport">Copiar texto</button>'+(navigator.share?'<button class="btn full mt" data-act="shareExport">Compartir (WhatsApp…)</button>':'')+'<button class="btn sec full mt" data-act="cerrar">Cerrar</button>');
+  $('x-text').value=exportText(a,ui.exp.inc);
+}
+
+/* ===== Eventos globales ===== */
+document.addEventListener('click',e=>{
+  const ak=e.target.closest('[data-ask]');
+  if(ak){const r=askBtns[+ak.dataset.ask].v;const res=askRes;askRes=null;$('modal').innerHTML='';res&&res(r);return}
+  if(e.target.id==='modalbg'){closeModal();return}
+  const b=e.target.closest('[data-act]');if(!b)return;
+  e.preventDefault();
+  const f=acts[b.dataset.act];if(f)f(b.dataset,b);
+});
+document.addEventListener('input',e=>{
+  const t=e.target;
+  switch(t.id){
+    case 'f-cod':ui.form.codigo=t.value;updateSug();break;
+    case 'f-desc':ui.form.desc=t.value;break;
+    case 'f-fecha':case 'e-fecha':t.value=maskFecha(t.value);if(t.id==='f-fecha')ui.form.fecha=t.value;break;
+    case 'f-pz':ui.form.piezas=t.value.replace(/\D/g,'');t.value=ui.form.piezas;break;
+    case 'f-bus':renderCat();break;
+    case 'l-text':{const p=$('l-prev');if(p)p.style.display=t.value.trim()?'block':'none';previewLista();break}
+  }
+});
+document.addEventListener('change',e=>{
+  const t=e.target;
+  if(t.id==='f-filtro'){ui.filter=t.value;render()}
+  else if(t.id==='f-filtroC'){ui.filterC=t.value;render()}
+  else if(t.id==='s-area'){ui.sh.area=t.value;refreshShareAct()}
+  else if(t.id==='s-urg'){ui.sh.urgent=t.checked;refreshShareAct()}
+  else if(t.id==='x-inc'){ui.exp.inc=t.checked;$('x-text').value=exportText(curArea(),ui.exp.inc)}
+  else if(t.id==='cam'&&t.files[0]){leerEtiqueta(t.files[0])}
+  else if(t.id==='r-file'&&t.files[0]){const fr=new FileReader();fr.onload=()=>{$('r-text').value=fr.result};fr.readAsText(t.files[0])}
+});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&!$('modal').innerHTML)render()});
+
+/* ===== Arranque ===== */
+try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}
+ocrCheck().then(v=>{ui.ocr=v}).catch(()=>{});
+if('serviceWorker' in navigator&&location.protocol.indexOf('http')===0){
+  const had=!!navigator.serviceWorker.controller;
+  navigator.serviceWorker.register('sw.js').then(reg=>{
+    const notify=()=>toast('Nueva versión disponible','Actualizar',()=>reg.waiting&&reg.waiting.postMessage('skip'),0);
+    if(reg.waiting&&navigator.serviceWorker.controller)notify();
+    reg.addEventListener('updatefound',()=>{const w=reg.installing;if(w)w.addEventListener('statechange',()=>{if(w.state==='installed'&&navigator.serviceWorker.controller)notify()})});
+  }).catch(()=>{});
+  let rl=false;
+  navigator.serviceWorker.addEventListener('controllerchange',()=>{if(had&&!rl){rl=true;location.reload()}});
+}
+render();
+</script>
+</body>
+</html>
